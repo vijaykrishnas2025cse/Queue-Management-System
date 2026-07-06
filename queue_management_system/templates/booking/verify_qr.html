@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Verify QR Code - Queue Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-qrcode"></i> Verify Service Completion</h4>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-4">Scan your QR code to confirm that your service has been completed.</p>
+
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="qr_data" class="form-label">QR Code Data</label>
+                            <textarea class="form-control" id="qr_data" name="qr_data" rows="3"
+                                      placeholder="Paste or scan your QR code data here..." required></textarea>
+                            <small class="form-text text-muted">
+                                You can paste the QR code content or use a QR scanner app.
+                            </small>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-check"></i> Confirm Completion
+                        </button>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="text-center">
+                        <p class="mb-2">Don't have a QR scanner?</p>
+                        <a href="https://play.google.com/store/search?q=qr%20scanner&c=apps" target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="fab fa-android"></i> Android Apps
+                        </a>
+                        <a href="https://apps.apple.com/us/app/search?q=qr%20scanner" target="_blank" class="btn btn-outline-primary btn-sm ms-2">
+                            <i class="fab fa-apple"></i> iOS Apps
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-focus on the textarea
+document.getElementById('qr_data').focus();
+
+// Optional: Add QR scanner integration (would require additional libraries)
+</script>
+{% endblock %}

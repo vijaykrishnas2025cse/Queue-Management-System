@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ action }} Queue - Admin Panel{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark">
+                    <h3 class="mb-0"><i class="fas fa-list-ol"></i> {{ action }} Queue Service</h3>
+                </div>
+                <div class="card-body p-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="id_service_name" class="form-label">Service Name *</label>
+                            {{ form.service_name }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_service_type" class="form-label">Service Type *</label>
+                            {{ form.service_type }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_description" class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="id_estimated_service_time" class="form-label">Estimated Service Time (minutes) *</label>
+                            {{ form.estimated_service_time }}
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input type="checkbox" id="id_is_active" name="is_active" class="form-check-input" {% if form.is_active.value %}checked{% endif %}>
+                            <label for="id_is_active" class="form-check-label">
+                                Queue is Active
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-save"></i> {{ action }} Queue
+                        </button>
+                    </form>
+
+                    <a href="{% url 'admin_queue_list' %}" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

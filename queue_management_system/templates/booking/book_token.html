@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Book Token - Queue Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-ticket-alt"></i> Book a Token</h3>
+                </div>
+                <div class="card-body p-4">
+                    <div class="alert alert-info mb-4">
+                        <i class="fas fa-info-circle"></i> You are booking a token for <strong>{{ queue.service_name }}</strong>
+                    </div>
+
+                    <h5>Service Details</h5>
+                    <table class="table table-borderless mb-4">
+                        <tr>
+                            <td><strong>Service Type:</strong></td>
+                            <td>{{ queue.get_service_type_display }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Estimated Time:</strong></td>
+                            <td>{{ queue.estimated_service_time }} minutes per token</td>
+                        </tr>
+                        {% if queue.description %}
+                            <tr>
+                                <td><strong>Description:</strong></td>
+                                <td>{{ queue.description }}</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+
+                    <hr>
+
+                    <form method="POST" class="mt-4">
+                        {% csrf_token %}
+                        <input type="hidden" name="queue_id" value="{{ queue.id }}">
+                        <p class="text-muted">
+                            <i class="fas fa-check-circle"></i> After booking, you will receive a unique QR code and real-time notifications when you're close to your turn.
+                        </p>
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            <i class="fas fa-plus"></i> Book Token Now
+                        </button>
+                    </form>
+
+                    <a href="{% url 'queue_detail' queue.id %}" class="btn btn-outline-secondary btn-lg w-100 mt-2">
+                        <i class="fas fa-arrow-left"></i> Back to Queue
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

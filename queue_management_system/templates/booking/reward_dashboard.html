@@ -1,0 +1,158 @@
+{% extends 'base.html' %}
+{% load booking_tags %}
+
+{% block title %}Reward Dashboard - Queue Management System{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1 class="mb-4"><i class="fas fa-star"></i> Your Reward Dashboard</h1>
+    
+    <!-- Reward Statistics Cards -->
+    <div class="row mb-4">
+        <!-- Total Points Card -->
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-star fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Total Points</h5>
+                    <h2 class="text-warning">{{ total_points }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Completed Bookings Card -->
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Completed</h5>
+                    <h2 class="text-success">{{ total_completed }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Priority Score Card -->
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-medal fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Priority Score</h5>
+                    <h2 class="text-danger">{{ priority_score }}</h2>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Average Points Card -->
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Avg Points</h5>
+                    <h2 class="text-info">{{ avg_points_per_booking|floatformat:1 }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benefits Section -->
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-gift"></i> Reward Benefits</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>0-50 Points:</strong> No special benefits
+                        </li>
+                        <li class="list-group-item">
+                            <strong>50-100 Points:</strong> Priority booking (faster queue slots)
+                        </li>
+                        <li class="list-group-item">
+                            <strong>100-200 Points:</strong> VIP status with higher priority
+                        </li>
+                        <li class="list-group-item">
+                            <strong>200+ Points:</strong> Premium VIP with guaranteed slots
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Rewards Section -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-history"></i> Recent Rewards (Last 5)</h5>
+                </div>
+                <div class="card-body">
+                    {% if rewards %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Reason</th>
+                                        <th>Points</th>
+                                        <th>Description</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reward in rewards|slice:":5" %}
+                                    <tr>
+                                        <td>{{ reward.created_at|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            <span class="badge bg-success">
+                                                {{ reward.get_reason_display }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <strong class="text-warning">+{{ reward.points_earned }}</strong>
+                                        </td>
+                                        <td>{{ reward.description }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        <a href="{% url 'reward_list' %}" class="btn btn-primary btn-sm">View All Rewards</a>
+                    {% else %}
+                        <p class="text-muted mb-0">No rewards yet. Start booking and completing services to earn points!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <a href="{% url 'token_list' %}" class="btn btn-primary">
+                <i class="fas fa-ticket-alt"></i> My Bookings
+            </a>
+            <a href="{% url 'reward_graph' %}" class="btn btn-info text-white">
+                <i class="fas fa-chart-area"></i> View Reward Graph
+            </a>
+            <a href="{% url 'queue_list' %}" class="btn btn-secondary">
+                <i class="fas fa-list"></i> Browse Queues
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0,0,0,0.2) !important;
+    }
+    
+    .table-hover tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+</style>
+{% endblock %}

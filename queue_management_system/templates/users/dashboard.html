@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% load booking_tags %}
+
+{% block title %}Dashboard - Queue Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h1 class="mb-4">
+                <i class="fas fa-chart-bar"></i> Welcome, {{ user.first_name|default:user.username }}!
+            </h1>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary">
+                <div class="card-body">
+                    <h5 class="card-title">Active Tokens</h5>
+                    <p class="card-text display-4">
+                        {% user_tokens_active user %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success">
+                <div class="card-body">
+                    <h5 class="card-title">Completed</h5>
+                    <p class="card-text display-4">
+                        {% user_tokens_completed user %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning">
+                <div class="card-body">
+                    <h5 class="card-title">Total Bookings</h5>
+                    <p class="card-text display-4">{{ bookings.count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-info">
+                <div class="card-body">
+                    <h5 class="card-title">Waiting Time</h5>
+                    <p class="card-text display-6">
+                        {% user_tokens_average_wait user %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-recent"></i> Recent Bookings</h5>
+                </div>
+                <div class="card-body">
+                    {% if bookings %}
+                        <div class="list-group">
+                            {% for booking in bookings %}
+                                <a href="{% url 'token_detail' booking.token.id %}" class="list-group-item list-group-item-action">
+                                    <div class="d-flex w-100 justify-content-between">
+                                        <h6 class="mb-1"><i class="fas fa-ticket-alt"></i> {{ booking.queue.service_name }}</h6>
+                                        <small>{{ booking.created_at|date:"M d, H:i" }}</small>
+                                    </div>
+                                    <p class="mb-1">Token #{{ booking.token.token_number }} - <span class="badge bg-{{ booking.token.status|status_color }}">{{ booking.token.get_status_display }}</span></p>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No bookings yet. <a href="{% url 'queue_list' %}">Browse queues</a></p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-user"></i> Your Profile</h5>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered mb-0">
+                        <tr>
+                            <td><strong>Username</strong></td>
+                            <td>{{ user.username }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Email</strong></td>
+                            <td>{{ user.email }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Phone</strong></td>
+                            <td>{{ profile.phone_number|default:"Not provided" }}</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Member Since</strong></td>
+                            <td>{{ user.date_joined|date:"M d, Y" }}</td>
+                        </tr>
+                    </table>
+                    <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-primary mt-3">
+                        <i class="fas fa-edit"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0"><i class="fas fa-lightbulb"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <a href="{% url 'queue_list' %}" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Book New Token
+                    </a>
+                    <a href="{% url 'token_list' %}" class="btn btn-info">
+                        <i class="fas fa-list"></i> View All Tokens
+                    </a>
+                    <a href="{% url 'reward_graph' %}" class="btn btn-warning text-white">
+                        <i class="fas fa-chart-area"></i> Reward Graph
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

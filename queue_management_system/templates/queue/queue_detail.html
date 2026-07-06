@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ queue.service_name }} - Queue Management System{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-refresh queue status every 10 seconds
+    setInterval(function() {
+        fetch("{% url 'queue_api_status' queue.id %}")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('waiting_count').textContent = data.waiting_count;
+                document.getElementById('est_wait_time').textContent = data.total_wait_minutes;
+                if (data.currently_served_token) {
+                    document.getElementById('serving_token').textContent = 'Token #' + data.currently_served_token;
+                    document.getElementById('serving_row').style.display = '';
+                }
+            });
+    }, 10000);
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1><i class="fas fa-building"></i> {{ queue.service_name }}</h1>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'queue_list' %}" class="btn btn-secondary float-end">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Service Type</h6>
+                    <p class="display-6">{{ queue.get_service_type_display }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Tokens Waiting</h6>
+                    <p id="waiting_count" class="display-6">{{ waiting_count }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-light">
+                <div class="card-body text-center">
+                    <h6 class="text-muted">Est. Wait Time</h6>
+                    <p id="est_wait_time" class="display-6">{{ estimated_wait_time }} <small>min</small></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if queue.description %}
+        <div class="alert alert-info mb-4">
+            <i class="fas fa-info-circle"></i> {{ queue.description }}
+        </div>
+    {% endif %}
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="fas fa-queue-list"></i> Queue Status</h5>
+                </div>
+                <div class="card-body">
+                    {% if currently_served %}
+                        <div class="alert alert-danger mb-4">
+                            <h6>
+                                <i class="fas fa-headset"></i> Currently Serving:
+                                <strong>Token #{{ currently_served.token_number }}</strong>
+                            </h6>
+                        </div>
+                    {% endif %}
+
+                    {% if tokens %}
+                        <div id="serving_row" style="{% if not currently_served %}display: none;{% endif %}">
+                            <p class="text-muted text-center">Next in queue</p>
+                        </div>
+                        <div class="list-group">
+                            {% for token in tokens|slice:":10" %}
+                                <div class="list-group-item">
+                                    <div class="d-flex w-100 justify-content-between align-items-center">
+                                        <div>
+                                            <h6 class="mb-1">
+                                                <i class="fas fa-user"></i> {{ token.user.get_full_name|default:token.user.username }}
+                                            </h6>
+                                            <small class="text-muted">Token #{{ token.token_number }}</small>
+                                        </div>
+                                        <span class="badge bg-{% if token.status == 'ready' %}success{% else %}warning{% endif %}">
+                                            {{ token.get_status_display }}
+                                        </span>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if tokens.count > 10 %}
+                            <p class="text-muted text-center mt-3">
+                                ... and {{ tokens.count|add:"-10" }} more in queue
+                            </p>
+                        {% endif %}
+                    {% else %}
+                        <p class="text-muted text-center py-4">
+                            <i class="fas fa-check-circle"></i> Queue is empty!
+                        </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="fas fa-tickets"></i> Book a Token</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-muted mb-3">Estimated service time: <strong>{{ queue.estimated_service_time }} minutes</strong></p>
+                    <a href="{% url 'book_token' queue.id %}" class="btn btn-success btn-lg w-100 mb-2">
+                        <i class="fas fa-plus"></i> Book Now
+                    </a>
+                    <a href="{% url 'token_list' %}" class="btn btn-outline-info w-100">
+                        <i class="fas fa-list"></i> My Tokens
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

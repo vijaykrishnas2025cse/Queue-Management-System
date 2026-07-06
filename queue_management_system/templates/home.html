@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Queue Management System{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron bg-light p-5 rounded">
+                <h1 class="display-4"><i class="fas fa-tasks"></i> Welcome to Queue Management</h1>
+                <p class="lead">Manage your queue position efficiently and save your time!</p>
+                <hr class="my-4">
+                {% if user.is_authenticated %}
+                    <p>Welcome, <strong>{{ user.username }}</strong>!</p>
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-primary btn-lg" href="{% url 'queue_list' %}" role="button">
+                            <i class="fas fa-list"></i> Browse Queues
+                        </a>
+                        <a class="btn btn-success btn-lg" href="{% url 'token_list' %}" role="button">
+                            <i class="fas fa-ticket-alt"></i> My Tokens
+                        </a>
+                        <a class="btn btn-info btn-lg" href="{% url 'dashboard' %}" role="button">
+                            <i class="fas fa-chart-bar"></i> Dashboard
+                        </a>
+                        <a class="btn btn-warning btn-lg text-white" href="{% url 'reward_graph' %}" role="button">
+                            <i class="fas fa-chart-area"></i> Reward Graph
+                        </a>
+                    </div>
+                {% else %}
+                    <p>Get started by creating an account or logging in.</p>
+                    <div class="btn-group" role="group">
+                        <a class="btn btn-primary btn-lg" href="{% url 'register' %}" role="button">
+                            <i class="fas fa-user-plus"></i> Register
+                        </a>
+                        <a class="btn btn-success btn-lg" href="{% url 'login' %}" role="button">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-5">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-book"></i> Book a Slot</h5>
+                    <p class="card-text">Browse available queues and book your token instantly without waiting in line.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-qrcode"></i> Get QR Code</h5>
+                    <p class="card-text">Receive a unique QR code for your token that can be scanned for quick verification.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title"><i class="fas fa-bell"></i> Get Notified</h5>
+                    <p class="card-text">Receive notifications when you're close to your turn. No more waiting unnecessarily!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
